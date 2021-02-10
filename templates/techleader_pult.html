@@ -1,0 +1,115 @@
+{% extends 'base2.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Board of Technical Leader{% endblock %}
+
+{% block breadcrumb1 %}
+
+{% include 'includes/menuleader.html' %}
+{% endblock %}
+{% block breadcrumb %}
+  
+  <li class="breadcrumb-item"><a href="#">{{ cname }}</a></li>
+  <li class="breadcrumb-item active">Műszaki vezető ({{ leadname }}) </li>
+  <li class="breadcrumb-item active">Irányítópult </li>
+  
+  
+  
+  
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded">
+      <img src="{% static 'img/traktor.png' %}" alt="">
+      <a href="/machine_reg/"><button type="button" class="btn btn-info">Munkagépek regisztrációja</button> </a>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded">
+      <img src="{% static 'img/traktoros.png' %}" alt="">
+      <a href="/driver_reg/"><button type="button" class="btn btn-info">Gépkezelők, traktorosok regisztrációja</button> </a>
+    </div>
+  </div>
+
+  
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded">
+      <img src="{% static 'img/laborans.png' %}" alt="">
+      <a href="/respons_reg"><button type="button" class="btn btn-info">Diagnosztikai felelős regisztrációja</button> </a>
+    </div>
+  </div>
+  
+</div>
+<div class="row">
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded">
+      <h4 style="color: rgb(79, 156, 228)">Újabb munkatípus felvétele:</h4>
+    <br>
+    <form method="post" id="formOne" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="formOne">
+
+     <div class="form-group">
+        
+        <input type="text" name="job" maxlength="20" class="form-control is-invalid" required="" id="id_job">
+      </div>
+      <button type="submit" class="btn btn-success"> Újabb munkatípus rögzítése </button>
+    </form>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded" style="max-height: 300px;">
+    <h4 style="color: rgb(79, 156, 228)">A rendszerben megtalálható, a gépkezelők által választható munkatípusok:</h4>
+    {% for job in jobs %}       
+      {{ job.job }} <br> {{ hm }}        
+    {% endfor %}
+  </div>
+  </div>
+  
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded" >
+    <h4 style="color: rgb(79, 156, 228)">Tankolás - fogyasztás - gépimunka, olajcsere - gépimunka analízis </h4>
+    <form method="post" id="formTwo" action="{% url 'techleader_pult' %}">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="formTwo">
+      <div class="form-group">
+        <button><label for="id_machinery">Válasszon gépet</label>
+        <select name="machinery" class="form-control is-invalid" id="id_machinery" style="height:40px">
+            {% for mach in machineobj %}
+                <option value="{{ mach.id }}">{{ mach.identnum }}</option>
+            {% endfor %}
+        
+        </select></button>
+        <span style="font-size: x-large; font-weight: bolder;"> {{ request.COOKIES.ident }}</span>      
+      </div>
+    </form> 
+    <button style="width: 100%;" type="button" class="btn btn-info" onclick="insert()">{{ request.COOKIES.ident }} gép üzemanyag fogyasztás - gépidő kimutatás</button><br><br>
+
+    <button style="width: 100%;" type="button" class="btn btn-info" onclick="insert_oil()">{{ request.COOKIES.ident }} gép olajcserék - kimutatás</button> <br><br>
+    <button style="width: 100%;" type="button" class="btn btn-info" onclick="insert_samp()">{{ request.COOKIES.ident }} gép fáradtolaj vizsgálatai</button>  
+    </div>
+  </div>
+  
+</div>
+<script>
+var myWindow
+  function insert() { 
+    myWindow=window.open("{% url 'chart2' %}", "myWindow", "width=1000, height=600");
+  }
+ 
+var myOilWindow  
+  function insert_oil() { 
+    myWindow=window.open("{% url 'chart_oil' %}", "myOilWindow", "width=1000, height=600");
+  }
+var mySampWindow  
+  function insert_samp() { 
+    myWindow=window.open("{% url 'lead_samples' %}", "mySampWindow", "width=1000, height=600");
+  }   
+   
+</script>
+
+{% endblock %}
+

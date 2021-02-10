@@ -1,0 +1,382 @@
+{% extends 'base2.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+
+{% block title %}Board of Driver{% endblock %}
+
+{% block breadcrumb1 %}
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Menü
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+    <a class="dropdown-item" href="#" onclick="insert()">Üzemanyag fogyasztás - gépidő</a>
+    <a class="dropdown-item" href="#" onclick="insert_oil()">Olajcserék - kimutatás</a>
+    <a class="dropdown-item" href="{% url 'password_ch' %}">Jelszó változtatás</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="{% url 'home' %}">Kilépés</a>
+  </div>
+</div>
+{% endblock %}
+{% block breadcrumb %}
+  
+  <li class="breadcrumb-item"><a href="#">{{ company }}</a></li>
+  <li class="breadcrumb-item active">Gépkezelő ({{ drivename }}, <b> {{ ident }}</b> ) </li>
+  <li class="breadcrumb-item active">Irányítópult </li>
+  
+  
+  
+  
+{% endblock %}
+
+{% block content %}
+
+<style> 
+  .header { 
+      position: sticky; 
+      top:0; 
+      vertical-align: middle;
+      text-align: center;
+      z-index: 3;
+  } 
+  .table-responsive { 
+      max-height: 250px;
+      overflow: auto;
+      margin-bottom: 5px; 
+  } 
+  
+</style>
+
+
+
+<div class="row">
+  <div class="col-sm-4 ">
+    
+    <h4><b> {{ ident }}</b> MUNKAGÉP </h4>
+    <br>{{ error_message }}<br>
+    
+    <!--it is {% now "SHORT_DATETIME_FORMAT" %}-->
+    <form method="post" id="formOne" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="formOne">
+      {% if request.COOKIES.starttime and request.COOKIES.machinery_id %}
+        <input style="visibility: hidden; height: 0px;" type="text" name="end_time" class="form-control is-invalid"  id="id_end_time">
+        {% if unit == "kilométer" %}
+          <div class="form-group">
+            <label for="id_end_kmeter">Kilometeróra állása befejezéskor:</label>
+            <input type="number" name="end_kmeter" class="form-control is-invalid"  id="id_end_kmeter">
+            
+          </div>
+        {% endif %}          
+       
+        <button type="submit" class="btn btn-danger gomb" ><span id="{{ job.job }}_c"></span>-kor <b>{{ request.COOKIES.wtype }} </b> BEFEJEZÉS</button>
+    
+      
+    
+
+        <script>
+          setInterval(function(){
+              currentTime = getDateTime();
+              document.getElementById("{{ job.job }}_c").innerHTML = currentTime;
+              
+              document.getElementById("id_end_time").defaultValue = currentTime;
+              
+          }, 1000);
+        
+        </script>
+      {% else %}
+        <input style="visibility: hidden;" type="text" name="start_time" class="form-control is-invalid"    id="id_start_time">
+        <div class="form-group">
+        {% for job in jobs %}
+          <input style="visibility: hidden;" type="radio" id="{{ job.job }}" name="wtype" value="{{ job.job }}">
+          <label class="gomb" onclick="document.getElementById('{{ job.job }}').checked = true;" for="{{ job.job }}"><button type="submit"  class="btn btn-info gomb" ><span id="{{ job.job }}_b"></span>-kor <b>{{ job.job }}</b> KEZDÉS</button></label>
+          <script>
+            setInterval(function(){
+                currentTime = getDateTime();
+                
+                document.getElementById("{{ job.job }}_b").innerHTML = currentTime;
+                document.getElementById("id_start_time").defaultValue = currentTime;
+                document.getElementById("tank").innerHTML = currentTime;             
+                document.getElementById("tank2").innerHTML = currentTime; 
+            }, 1000);
+          
+          </script>
+          {% endfor %} 
+        </div>
+        <!--<div class="form-group">
+          <label for="id_sum_whour">Munkaóra:</label>
+          <input type="number" name="sum_whour" class="form-control is-invalid"  id="id_sum_whour">
+          
+        </div>-->
+        {% if unit == "kilométer" %}
+          <div class="form-group">
+            <label for="id_start_kmeter">Kilométeróra állása kezdéskor:</label>
+            <input type="number" name="start_kmeter" class="form-control is-invalid"  id="id_start_kmeter">
+            
+          </div>
+        {% endif %}
+      {% endif %}
+    
+
+       
+        
+      
+  
+  
+  
+  
+         
+      
+    </form>
+    
+  </div>
+  <div class="col-sm-4 ">
+    <h4><b> {{ ident }}</b> TANKOLÁS </h4>
+    <img src="{% static 'img/tankolas.png' %}" alt="">
+     
+    <form method="post" id="formTwo" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="formTwo">
+
+      <table>
+        <tbody>
+          {% if unit == "kilométer" %}
+          <tr class="form-group">
+            <th>
+              <label for="id_kmeter">Kilométer óra állása:</label>
+            </th>
+            <td>
+              <input class="form-control is-invalid" type="number" name="kmeter" id="id_kmeter">
+            </td>
+          </tr>
+          {% endif %}
+          <tr class="form-group">
+            <th>
+              <label for="id_liter">Tankolt mennyiség (liter):</label>
+            </th>
+            <td>
+              <input class="form-control is-invalid" type="number" name="liter" required="" id="id_liter">
+              <div class="invalid-feedback"> Ennek a mezőnek a megadása kötelező.</div>
+            </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <input style="visibility: hidden; height: 0px;" type="text" name="extime" class="form-control is-invalid"  id="id_extime">
+        <script>
+          setInterval(function(){
+              currentTime = getDateTime();
+              ocument.getElementById("id_extime").defaultValue = currentTime;              
+          }, 1000);        
+        </script>
+
+      <button style="margin: 5px; width: 100%;" type="submit" class="btn btn-success">Feltöltés <span id="tank"></span>-kor</button>
+    </form>
+    
+  </div>
+  
+  <div class="col-sm-4">
+    <h4><b> {{ ident }}</b> OLAJCSERE </h4>
+    <img src="{% static 'img/olajcsere.png' %}" alt="">
+    <form method="post" id="formThree" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="formThree">
+
+      <table>
+        <tbody>
+          {% if unit == "kilométer" %}
+          <tr class="form-group">
+            <th>
+              <label for="id_kmeter">Kilométer óra állása:</label>
+            </th>
+            <td>
+              <input class="form-control is-invalid" type="number" name="kmeter" id="id_kmeter">
+            </td>
+          </tr>
+          {% endif %}
+          <tr class="form-group">
+            <th>
+              <label for="id_liter">Lecserélt mennyiség (liter):</label>
+            </th>
+            <td>
+              <input class="form-control is-invalid" type="number" name="liter" required="" id="id_liter">
+              <div class="invalid-feedback"> Ennek a mezőnek a megadása kötelező.</div>
+            </td>
+            </tr>
+          </tbody>
+        </table>
+        <input style="visibility: hidden; height: 0px;" type="text" name="extime" class="form-control is-invalid"  id="id_extime">
+        <script>
+          setInterval(function(){
+              currentTime = getDateTime();
+              ocument.getElementById("id_extime").defaultValue = currentTime;              
+          }, 1000);        
+        </script>
+      <button style="margin: 5px; width: 100%;" type="submit" class="btn btn-success">Feltöltés <span id="tank2"></span>-kor</button>
+    </form>
+  </div>
+  
+</div>
+
+
+
+
+
+<div class="row">
+  
+  <div class="col-sm-4">
+    <div class="container table-responsive">
+      <table class="table">
+          <thead class="thead-dark">
+              <tr><th colspan="3" class="header"><h4>MUNKÁK/ GÉPMOZGÁS</h4></th></tr>
+              <tr>
+              
+              <th scope="col" class="header">Mikor?</th>
+              <th scope="col" class="header">Tevékenység?</th>
+              <th scope="col" class="header">Munkaóra?</th>
+              {% if unit == "kilométer" %}
+              <th scope="col" class="header">Kilométeróra</th>
+              {% endif%}
+              
+              </tr>
+          </thead>
+          <tbody>
+              {% for task in myruning %}
+                {% if task.workday >= startday %}
+                  <tr>
+                 
+                  <td class="table-secondary" >{{ task.workday|date:"Y.m.d." }}</td>
+                  <td class="table-primary">{{ task.wtype  }}</td>
+                  <td class="table-secondary">{{ task.sum_whour|floatformat:2  }}</td>
+                  {% if unit == "kilométer" %}
+                  <td class="table-info">{{task.start_kmeter}}</td>
+                  {% endif %}
+                   
+                  
+                  
+                  </tr>
+                {% endif %}
+              {% endfor %}
+          </tbody>
+      </table>    
+    </div>
+  </div>
+
+
+
+
+  <div class="col-sm-4">
+    
+    <div class="container table-responsive">
+      <table class="table">
+          <thead class="thead-dark"><tr><th colspan="3" class="header"><h4>TANKOLÁSOK</h4></th></tr>
+
+              <tr>
+              
+              <th scope="col" class="header">Mikor?</th>
+              {% if unit == "kilométer" %}
+              <th scope="col" class="header">Kilométeróra</th>
+              {% endif%}
+              <th scope="col" class="header">Mennyi? (liter)</th>
+              <th scope="col" class="header">Gépóra</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for task in myfuellings %}
+                {% if startday <= task.ftime %}
+                  <tr>
+                 
+                    <td class="table-secondary" >{{task.ftime|date:"Y.m.d."}}</td>
+                    {% if unit == "kilométer" %}
+                    <td class="table-info">{{task.kmeter}}</td>
+                    {% endif %}
+                    <td class="table-primary">{{task.liter}}</td> 
+                    <td class="table-secondary" >{{ task.extime }}</td>
+                  
+                  </tr>
+                {% endif %} 
+              {% endfor %}
+          </tbody>
+      </table>    
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="container table-responsive">
+      <table class="table"> 
+          <thead class="thead-dark"><tr><th colspan="3" class="header"><h4>OLAJCSERÉK</h4></th></tr>
+
+              <tr>
+              
+              <th scope="col" class="header">Mikor?</th>
+              {% if unit == "kilométer" %}
+              <th scope="col" class="header">Kilométeróra</th>
+              {% endif%}
+              <th scope="col" class="header">Mennyi? (liter)</th>
+              <th scope="col" class="header">Gépóra</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for task in myoilch %}
+                {% if startday <= task.ftime %}
+                  <tr>
+                 
+                    <td class="table-secondary" >{{task.ftime|date:"Y.m.d."}}</td>
+                    {% if unit == "kilométer" %}
+                    <td class="table-info">{{task.kmeter}}</td>
+                    {% endif %}
+                    <td class="table-primary">{{task.liter}}</td> 
+                    <td class="table-secondary" >{{ task.extime }}</td>
+                  
+                  </tr>
+                {% endif %} 
+              {% endfor %}
+          </tbody>
+      </table>    
+    </div>
+    
+    
+  </div>
+</div>
+<div id="stat"></div>
+<script>
+  function getDateTime() {
+        var now     = new Date(); 
+        var year    = now.getFullYear();
+        var month   = now.getMonth()+1; 
+        var day     = now.getDate();
+        var hour    = now.getHours();
+        var minute  = now.getMinutes();
+        var second  = now.getSeconds(); 
+        if(month.toString().length == 1) {
+             month = '0'+month;
+        }
+        if(day.toString().length == 1) {
+             day = '0'+day;
+        }   
+        if(hour.toString().length == 1) {
+             hour = '0'+hour;
+        }
+        if(minute.toString().length == 1) {
+             minute = '0'+minute;
+        }
+        if(second.toString().length == 1) {
+             second = '0'+second;
+        }   
+        var dateTime = year+'. '+month+'. '+day+'. '+hour+':'+minute;
+        //var dateTime = [ear, month, day, hour ,minute, second, 289, 5, 0];    
+         return dateTime;
+    }
+  var myWindow
+  function insert() { 
+    myWindow=window.open("{% url 'chart2' %}", "myWindow", "width=1000, height=600");
+  }
+  var myOilWindow
+  function insert_oil() { 
+    myWindow=window.open("{% url 'chart_oil' %}", "myOilWindow", "width=1000, height=600");
+  }  
+   
+</script>
+
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends 'base2.html' %}
+
+{% load static %}
+
+
+{% block title %}Board of Fuel Consuption{% endblock %}
+
+{% block breadcrumb1 %}
+
+  <button class="btn btn-secondary dropdown-toggle" type="button" onclick="closeWin()" >
+    Vissza a vezérlőpulthoz
+  </button>
+  
+
+{% endblock %}
+
+{% block breadcrumb %}
+  
+  <li class="breadcrumb-item"><a href="#">{{ company }}</a></li>
+  <li class="breadcrumb-item active">Gépkezelő ({{ drivename }}, <b> {{ ident }}</b> ) </li>
+  <li class="breadcrumb-item active">Üzemanyag fogyasztás -- gépi munkavégzés elemzés </li>
+  
+  
+  
+  
+{% endblock %}
+
+{% block content %}
+<style>
+  canvas {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+  } 
+</style>
+
+  <!--<div class='row'>
+    <div class='col-sm-6' url-endpoint='{% url "consupt_works2" %}'>
+        
+      <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+  </div>-->
+
+
+  <style> 
+    .header { 
+        position: sticky; 
+        top: 0; 
+        vertical-align: middle;
+        text-align: center;
+        z-index: 3;
+    } 
+    .table-responsive { 
+        max-height: 500px;
+        overflow: auto; 
+    } 
+    
+</style> 
+
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+  {% include 'includes/base/js.html' %}
+  <script>
+    $(document).ready(function(){
+      
+        var endpoint = '/consupt_works2/';
+        var defaultData = [];
+        var labels = [];
+        var timeF = [];
+        $.ajax({
+            method: "GET",
+            url: endpoint,
+            success: function(data){
+                //labels = data.labels
+                ///defaultData = data.data
+                gdefaultData = data.gdata
+                //timeF = data.timeFuell
+                //sor = data.sor
+                //setChart()
+                //ch()
+                
+                
+            },
+            error: function(error_data){
+                console.log("error")
+                console.log(error_data)
+            }
+        })
+        
+        
+       
+    
+    });
+    
+  </script>
+
+
+
+<div class="table-responsive" id="itt">
+  <form method="POST" action="{% url 'chart2' %}"> {% csrf_token %}
+  <table class="table table-bordered table-striped" >
+  <thead style="position: sticky; top: 0;" class="thead-light"> 
+    <tr  >
+     
+      <th class="header" scope="col">Tankolás<br> napja</th>
+      <th class="header" scope="col">Tankolt <br>(liter)</th>
+      <th class="header" scope="col">Összes <br>gépóra</th>
+      <th class="header" scope="col">Előző tankolástól<br> gépóra</th>
+      <th class="header" scope="col">Fogyasztás <br>(liter/óra)<hr>Bázis</th>
+      <th class="header" scope="col">Fogyasztás <br>változás (%)</th>
+      <th class="header" scope="col">Átlagos <br>fogyasztás</th>
+      <th class="header" scope="col">Munkavégzés <br>az előző tankolástól</th>
+    </tr>
+  </thead>
+  {% for data in dataSummary %}
+      <tr style="text-align: center; vertical-align: middle;" id="azon{{d}}">
+      
+      {% for d in data %}
+        {% if d == 0.0 %}
+          <td style="text-align: center; vertical-align: middle;  background: rgb(166, 245, 218);" > {{d}} 
+        
+            {% if forloop.counter0 == 4 %} <hr><button type="submit"  class="btn btn-secondary" name="baze" value="{{d}}" onclick="changebackground()">Legyen ez a bázis: <input type="radio"  id="base{{ forloop.counter0 }}" name="baze" value="{{d}}" > </button>{% endif %}
+            
+          </td>
+        
+        {% else %}
+          <td style="text-align: center; vertical-align: middle; " > {{d}} 
+        
+            {% if forloop.counter0 == 4 %} <hr><button type="submit"  class="btn btn-secondary" name="baze" value="{{d}}" onclick="changebackground()">Legyen ez a bázis: <input type="radio"  id="base{{ forloop.counter0 }}" name="baze" value="{{d}}" > </button>{% endif %}
+            
+          </td>
+        {% endif %}
+       
+      {% endfor %}
+      
+      <td style="text-align: center; vertical-align: middle;"   id='piec{{ forloop.counter0 }}'></td></tr>
+  {% endfor %}
+  
+  </table>
+  </form> 
+</div> 
+
+
+<div id="piechart0"></div>
+<div id="piechart1"></div>
+<div id="piechart2"></div>
+<table id="demo"></table>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script>
+    
+   
+    var range = 3;
+    
+    
+    
+// Load google charts
+    
+    
+   
+    /*for (i=0; i<gdefaultData.length; i++){
+            table += "<tr><td> </td><td> </td><td id='piechart" + i + "'></td></tr>";
+        }
+        document.getElementById("demo").innerHTML = table;*/
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+         
+    // Draw the chart and set the chart values
+      
+    function drawChart() {
+    
+    var data=[];
+    var chart=[];
+    for (i=0; i<3; i++){
+    
+    data[i] = google.visualization.arrayToDataTable(gdefaultData[i]);  
+    // Optional; add a title and set the width and height of the chart
+    var options = {'title':'', 'width':225, 'height':150,};
+
+    // Display the chart inside the <div> element with id="piechart"'
+    //var chart = new google.visualization.PieChart(document.getElementById("'piechart"+i+"'"));
+  
+    
+    chart[i] = new google.visualization.PieChart(document.getElementById( "piec" + i));
+    chart[i].draw(data[i], options);
+
+    }
+    
+    }
+    //document.getElementById("demo").innerHTML = table;
+
+
+  function changebackground(){
+    document.getElementById('azon0,0').style.backgroundColor="green";
+  }
+   
+  function closeWin() {
+    window.close()
+  }
+
+</script>
+
+
+
+  
+{% endblock %}

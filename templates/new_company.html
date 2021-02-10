@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Start a New Company{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">OilControl</a></li>
+  <li class="breadcrumb-item active">Új cég</li>
+{% endblock %}
+
+{% block content %}
+<h5 style="color:crimson">{{ error_message }}<br>
+  {% if error_message %}
+    <a href="{{ request.get_full_path }}">�~ZJRA</a>
+  {% endif %}</h5>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% include 'includes/form.html' %}
+  <button type="submit" class="btn btn-success">Feltöltés</button>
+</form>
+
+<form class="seged" method="post" novalidate>
+  {% csrf_token %}
+  <table class="seged">
+    {{ form1.as_table }}
+  </table>
+  <button class="seged" type="submit" class="btn btn-success">Feltöltés2</button>
+</form>
+<br>
+
+
+
+{% endblock %}
+
+
+{% block content1 %}
+<style>
+  
+  
+  
+  .header { 
+      position: sticky; 
+      top:0; 
+      vertical-align: middle;
+      text-align: center;
+      z-index: 3;
+  } 
+  .table-responsive { 
+      max-height: 450px;
+      overflow: auto;
+      margin-bottom: 5px; 
+  } 
+
+</style>
+
+        <br> <br>
+
+      <h3>{{ title }}:</h3>
+      <table class="table table-bordered table-striped table-responsive" id="mainTable">
+        <thead style="position: sticky; top: 0;" class="thead-light header"> 
+          <tr  >
+          
+              <th class="header" scope="col">id</th>
+              <th class="header" scope="col">Név</th>
+              <th class="header" scope="col">email</th>
+              <th class="header" scope="col">Kezdés napja</th>
+              
+              
+      
+          </tr>
+          </thead>
+        {% for compy in companies %}
+            
+              <tr style="text-align: center; vertical-align: middle;" id={{compy.id}} >      
+                <td style="text-align: center; vertical-align: middle; " > {{ compy.id }}</td>
+                <td style="text-align: center; vertical-align: middle; " > 
+                  
+                  {% if flag == "1" or flag == "2" or flag == "3" %}
+                    {{ compy.user }}
+                  {% elif flag == '4' %}
+                    {{ compy.job }}
+                  {% else %}
+                    {{ compy.name }}
+                  {% endif %}
+                </td>
+                <td style="text-align: center; vertical-align: middle; " > 
+                  {% if flag == '4' %}
+                    {{ compy.job }}
+                  {% else %}
+                    {{ compy.email }}
+                  {% endif %}
+                </td>
+                <td style="text-align: center; vertical-align: middle; " > {{ compy.wday }}</td>
+              </tr>
+            {% endfor %}
+      </table>
+      <br /><br />
+      <h3>Adminlist:</h3>
+      <table class="table table-bordered table-striped table-responsive" id="mainTable">
+        <thead style="position: sticky; top: 0;" class="thead-light header"> 
+          <tr  >
+          
+              <th class="header" scope="col">id</th>
+              <th class="header" scope="col">User</th>
+              <th class="header" scope="col">comp</th>
+              <th class="header" scope="col">mach</th>
+              <th class="header" scope="col">lead</th>
+              <th class="header" scope="col">samp</th>
+              <th class="header" scope="col">Passw</th>
+      
+          </tr>
+          </thead>
+        {% for adm in admins %}
+            
+              <tr style="text-align: center; vertical-align: middle;" id={{compy.id}} >      
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.id }}</td>
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.user }}</td>
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.comp }}</td>
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.mach }}</td>
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.lead }}</td>
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.samp }}</td>
+                <td style="text-align: center; vertical-align: middle; " > {{ adm.password}}</td>
+                
+              </tr>
+            {% endfor %}
+      </table>
+
+      <div id="password"></div>
+      <script language="javascript">
+        var tbl = document.getElementById("mainTable");
+        
+        if (tbl != null) {
+          
+          var hossz=tbl.rows.length;
+         
+          for (var i = 1; i < tbl.rows.length; i++) {
+              tbl.rows[i].style.cursor = "pointer";
+              tbl.rows[i].onclick = function() {getval(this);};
+              tbl.rows[i].onmousemove = function () { this.style.textDecoration = "underline";   this.style.color = "rgb(13, 109, 199)";};
+              tbl.rows[i].onmouseout = function () { this.style.textDecoration = ""; this.style.color = ""; };
+          }
+        }
+
+        function getval(k) {
+          
+          document.getElementById("id_name").value=k.cells[1].innerHTML.trim();
+          document.getElementById("id_email").value=k.cells[2].innerHTML.trim();
+          
+          
+        }
+      </script>
+      
+{% endblock %}}

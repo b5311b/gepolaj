@@ -1,0 +1,166 @@
+{% extends 'base2.html' %}
+
+{% load static %}
+
+
+{% block title %}Board of Fuel Consuption{% endblock %}
+
+{% block breadcrumb1 %}
+
+  <button class="btn btn-secondary dropdown-toggle" type="button" onclick="closeWin()" >
+    Vissza a vezérlőpulthoz
+  </button>
+  
+
+{% endblock %}
+
+{% block breadcrumb %}
+  
+  <li class="breadcrumb-item"><a href="#">{{ company }}</a></li>
+  <li class="breadcrumb-item active">Gépkezelő ({{ drivename }}, <b> {{ ident }}</b> ) </li>
+  <li class="breadcrumb-item active">Olajcserék -- gépi munkavégzés analízis </li>
+  
+  
+  
+  
+{% endblock %}
+
+{% block content %}
+<style>
+  canvas {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+  } 
+</style>
+
+  <!--<div class='row'>
+    <div class='col-sm-6' url-endpoint='{% url "consupt_works2" %}'>
+        
+      <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+  </div>-->
+
+
+  <style> 
+    .header { 
+        position: sticky; 
+        top: 0; 
+        vertical-align: middle;
+        text-align: center;
+        z-index: 3;
+    } 
+    .table-responsive { 
+        max-height: 500px;
+        overflow: auto; 
+    } 
+    
+</style> 
+
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+  {% include 'includes/base/js.html' %}
+  <script>
+    $(document).ready(function(){
+      
+        var endpoint = '/consupt_works3/';
+        var defaultData = [];
+        var labels = [];
+        var timeF = [];
+        $.ajax({
+            method: "GET",
+            url: endpoint,
+            success: function(data){
+                //labels = data.labels
+                //dData = data.data
+                gdefaultData = data.gdata
+                //timeF = data.timeFuell
+                //sor = data.sor
+                //setChart()
+                //ch()
+                
+                
+            },
+            error: function(error_data){
+                console.log("error")
+                console.log(error_data)
+            }
+        })
+        
+        
+       
+    
+    });
+    
+  </script>
+
+
+
+
+
+
+<div id="chart"></div>
+<div id="piechart1"></div>
+<div id="piechart2"></div>
+<table id="demo"></table>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script>
+    
+   
+    var range = 3;
+    
+    
+    
+// Load google charts
+    
+    
+   
+    /*for (i=0; i<gdefaultData.length; i++){
+            table += "<tr><td> </td><td> </td><td id='piechart" + i + "'></td></tr>";
+        }
+        document.getElementById("demo").innerHTML = table;*/
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+         
+    // Draw the chart and set the chart values
+      
+    function drawChart() {
+    
+   
+    var l = 50*gdefaultData.length
+    
+    var data = google.visualization.arrayToDataTable(gdefaultData);  
+    // Optional; add a title and set the width and height of the chart
+    var options = {'title':'A {{ ident }} gép olajcsere datumai - a lecserélt olajjal végzett munkák munkaórában', height:l, isStacked:true};
+
+    // Display the chart inside the <div> element with id="piechart"'
+    //var chart = new google.visualization.PieChart(document.getElementById("'piechart"+i+"'"));
+  
+    
+    var chart= new google.visualization.BarChart(document.getElementById( "chart" ));
+    chart.draw(data, options);
+
+    
+    
+    }
+    //document.getElementById("demo").innerHTML = table;
+
+
+  function changebackground(){
+    document.getElementById('azon0,0').style.backgroundColor="green";
+  }
+   
+  function closeWin() {
+    window.close()
+  }
+
+</script>
+
+
+
+  
+{% endblock %}

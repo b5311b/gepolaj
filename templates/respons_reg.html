@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+
+{% block title %} Start a New Responsable for Diagnostic {% endblock %}
+{% block breadcrumb1 %}
+  {% include 'includes/menuleader.html' %}
+{% endblock %}
+
+
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="#">{{ company }}</a></li>
+  <li class="breadcrumb-item active">Műszaki vezető ({{ leadobj.name }}) </li>
+  <li class="breadcrumb-item active">Diagnosztikai Felelős Regisztráció: </li>
+{% endblock %}
+
+{% block content %}
+<style>
+  form div:nth-of-type(5) {
+      display: none;
+  }
+</style>
+<h5 style="color:crimson">{{ error_message }}<br>
+  {% if error_message %}
+    <a href="{{ request.get_full_path }}">ÚJRA</a>
+  {% endif %}</h5>
+<form method="post" novalidate>
+  {% csrf_token %} 
+      
+  {% include 'includes/form.html' %}
+     
+  <button type="submit" class="btn btn-success">Regisztráció</button>
+</form>
+<form class="seged" method="post" novalidate>
+  {% csrf_token %}  
+  <table class="seged">
+    {{ form1.as_table }}
+  </table>
+  <button class="seged" type="submit" class="btn btn-success">Feltöltés2</button>
+</form>
+<div id="password"></div>
+{% endblock %}
+
+
+{% block content1 %}
+      A rendszer figyeli és nem engedi a töbszörös regisztrációt, 
+      vagyis egy felhasználónévvel csak egyszer lehet regisztrálnii  a rendszerbe.<br> <br> 
+      Az eddigi regisztrált diagnosztikáért felelősők listáját (név ---- munkába állás nappja) itt láthatja.
+      <h3>Regisztrált diagnosztikáért felelős ({{ company }}):</h3>
+      {% for resp in responses %}       
+        {{ resp.name }} ----
+        {{ resp.startday }}-tól
+        <br>  
+      {% endfor %}
+      
+{% endblock %}

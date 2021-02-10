@@ -1,0 +1,844 @@
+{% extends 'base2.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Board of Supervisor{% endblock %}
+
+{% block breadcrumb1 %}
+<!--{% include 'includes/menuleader.html' %}-->
+
+<div class="dropdown" style="z-index: 100;">
+  <button class="btn btn-secondary dropdown-toggle" type="button"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Menü
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+      
+      <a class="dropdown-item" href="{% url 'password_ch' %}">Jelszó változtatás</a>
+
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="{% url 'home' %}">Kilépés</a>
+  </div>
+</div>
+{% endblock %}
+{% block breadcrumb %}
+  
+  
+  <li class="breadcrumb-item active">Supervisor </li>
+  <li class="breadcrumb-item active">Irányítópult </li>
+  
+  
+  
+  
+{% endblock %}
+
+{% block content %}
+<style>
+  
+  .kep {
+      display: inline;
+  }
+  
+  .header { 
+      position: sticky; 
+      top:0; 
+      vertical-align: middle;
+      text-align: center;
+      z-index: 3;
+  } 
+  .table-responsive { 
+      max-height: 450px;
+      overflow: auto;
+      margin-bottom: 5px; 
+  } 
+
+</style>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive" id="itt">
+        
+            <table class="table table-bordered table-striped" id="mainTable">
+            <thead style="position: sticky; top: 0;" class="thead-light header"> 
+            <tr  >
+            
+                <th class="header" scope="col">Minta<br> azonosító</th>
+                <th class="header" scope="col">A gép <br>azonosítója</th>
+                <th class="header" scope="col">Mintavétel <br>napja</th>
+                <th class="header" scope="col">Beérkezés<br>napja</th>
+                <th class="header" scope="col">A gép élekora<br>mintavételkor<br> (gépóra)</th>
+                <th class="header" scope="col">Viszkozitás <br>változás<br>(%)</th>
+                <th class="header" scope="col">Koromtartalom<br>(%)</th>
+                <th class="header" scope="col">Összülledék<br>(ppm)</th>
+                <th class="header" scope="col">Vasmentes<br>összülledék<br>(ppm)</th>
+                <th class="header" scope="col">Vastartalom<br>(ppm)</th>
+                <th class="header" scope="col">Víztartalom<br>(%)</th>
+                <th class="header" scope="col">Illóanyag<br>(%)</th>
+                <th class="header" scope="col">Lobbanáspont<br>(&ordm;C)</th>
+                
+        
+            </tr>
+            </thead>
+            {% for data in superData %}
+            
+              <tr style="text-align: center; vertical-align: middle;" id={{data.0}} >
+                
+                {% for d in data %}
+                
+                <td style="text-align: center; vertical-align: middle; " > {{d}}</td>
+                
+                
+                
+                {% endfor %}
+                
+              </tr>
+            {% endfor %}
+            
+            </table>
+            
+        
+        
+        
+        <table id="segedTbl">
+            {% for data in superData1 %}
+            <tr style="text-align: center; vertical-align: middle;"  >
+                
+                {% for d in data %}
+                
+                    <td style="text-align: center; vertical-align: middle; " >{{d}}</td>
+                
+                
+                {% endfor %}
+                
+            </tr>
+            {% endfor %}
+        
+        </table>
+        </div>
+    </div>            
+</div>
+
+
+
+
+
+<div id="formDiv">
+<div class="row">
+  <div class="col-sm-12">
+    
+    
+      
+      
+      <span id="megse" >
+        <br>
+        Mégse-> 
+        <input type="radio" onclick="toggno()" id="nem" name="" value="">
+      </span>
+      <br><br>
+      
+      <h1 style="color: rgb(79, 156, 228)" id="head"></h1>
+   
+
+  </div>
+ 
+</div>
+
+<form method="post" id="formOne" novalidate>
+
+{% csrf_token %}
+<input type="hidden" name="form_type" value="formOne">  
+<div class="row">
+  <div class="col-sm-4">
+    <div class="pult border border-info rounded form-group" style="min-height: 300px;" >
+      
+        <h4 style="color: rgb(79, 156, 228)">Minta adminisztració:</h4>
+      <input style="display: none; height: 0px;" type="text" name="minta1" maxlength="20" class="form-control is-invalid" required="" id="minta1" value=''>
+      <div id="mint1"></div>
+      <div id="ceg"></div>
+      <div id="techl"></div>
+      <div id="techlem"></div>
+      <div id="resp"></div>
+      <div id="respem"></div>
+      <div id="gep1"></div>
+     
+      <div id="mintavetel1"></div>
+     
+      <div id="beerkezes1"></div>
+      <div id="kor1"></div>
+      
+      
+    </div>
+    
+  </div>
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Viszkozitás változás (%):</h4>
+      <div class="form-group" id="11">    
+        <label for="id_viszkozitas_valtozas1">Első mérés</label>        
+        <input type="number" name="viszkozitas_valtozas1" step="any" class="form-control" id="id_viszkozitas_valtozas1">
+      </div>
+    
+    
+      <div class="form-group" id="12">
+        <label for="id_viszkozitas_valtozas2">Második mérés</label>
+        <input type="number" name="viszkozitas_valtozas2" step="any" class="form-control" id="id_viszkozitas_valtozas2">
+      </div>
+    
+    
+      <div class="form-group" id="13">        
+        <label for="id_viszkozitas_valtozas3">Harmadik mérés</label>
+        <input type="number" name="viszkozitas_valtozas3" step="any" class="form-control" id="id_viszkozitas_valtozas3">
+      </div>
+
+      <div id="5atlag"><span id="55atlag"></span><span><b>Határérték: <+-20%</b></span></div>
+      <div id="viszkozitas1"></div>
+      <button type="submit" class="btn btn-success" id="but2"> Az adatok rögzítése </button>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Koromtartalom (%):</h4>
+      <div class="form-group" id="21">    
+        <label for="id_koromtartalom1">Első mérés</label>        
+        <input type="number" name="koromtartalom1" onclick="curve()" step="any" class="form-control" id="id_koromtartalom1">
+      </div>
+    
+    
+      <div class="form-group" id="22">
+        <label for="id_koromtartalom2">Második mérés</label>
+        <input type="float" name="koromtartalom2"  onclick="curve()" class="form-control" id="id_koromtartalom2">
+      </div>
+    
+    
+      <div class="form-group" id="23">        
+        <label for="id_koromtartalom3">Harmadik mérés</label>
+        <input type="float" name="koromtartalom3" onclick="curve()" class="form-control" id="id_koromtartalom3">
+      </div>
+      <div id="6atlag"><span id="66atlag"></span><span><b>Határérték: 2,5%</b></span></div>
+      <div id="korom1"></div>
+      <button type="submit" class="btn btn-success" id="but3"> Az adatok rögzítése </button>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Összülledék (ppm):</h4>
+      <div class="form-group" id="31">    
+        <label for="id_osszulledek1">Első mérés</label>        
+        <input type="number" name="osszulledek1" step="any" class="form-control" id="id_osszulledek1">
+      </div>
+    
+    
+      <div class="form-group" id="32">
+        <label for="id_osszulledek2">Második mérés</label>
+        <input type="number" name="osszulledek2" step="any" class="form-control" id="id_osszulledek2">
+      </div>
+    
+    
+      <div class="form-group" id="33">        
+        <label for="id_osszulledek3">Harmadik mérés</label>
+        <input type="number" name="osszulledek3" step="any" class="form-control" id="id_osszulledek3">
+      </div>
+      <div id="7atlag"><span id="77atlag"></span><span><b>Határérték: < 200ppm</b></span></div>
+      <div id="osszull1"></div>
+      <button type="submit" class="btn btn-success" id="but4"> Az adatok rögzítése </button>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Vasmentes összülledék (ppm):</h4>
+      <div class="form-group" id="41">    
+        <label for="id_vasm_osszulledek1">Első mérés</label>        
+        <input type="number" name="vasm_osszulledek1" step="any" class="form-control" id="id_vasm_osszulledek1">
+      </div>
+    
+    
+      <div class="form-group" id="42">
+        <label for="id_vasm_osszulledek2">Második mérés</label>
+        <input type="number" name="vasm_osszulledek2" step="any" class="form-control" id="id_vasm_osszulledek2">
+      </div>
+    
+    
+      <div class="form-group" id="43">        
+        <label for="id_vasm_osszulledek3">Harmadik mérés</label>
+        <input type="number" name="vasm_osszulledek3" step="any" class="form-control" id="id_vasm_osszulledek3">
+      </div>
+      <div id="8atlag"><span id="88atlag"></span><span><b> Határérték: < 100ppm</b></span></div>
+      <div id="vasmosszull1"></div>
+      <button type="submit" class="btn btn-success" id="but5"> Az adatok rögzítése </button>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Vastartalom (ppm):</h4>
+      <div class="form-group" id="51">    
+        <label for="id_vastartalom1">Első mérés</label>        
+        <input type="number" name="vastartalom1" step="any" class="form-control" id="id_vastartalom1">
+      </div>
+    
+    
+      <div class="form-group" id="52">
+        <label for="id_vastartalom2">Második mérés</label>
+        <input type="number" name="vastartalom2" step="any" class="form-control" id="id_vastartalom2">
+      </div>
+    
+    
+      <div class="form-group" id="53">        
+        <label for="id_vastartalom3">Harmadik mérés</label>
+        <input type="number" name="vastartalom3" step="any" class="form-control" id="id_vastartalom3">
+      </div>
+      <div id="9atlag"><span id="99atlag"></span><span><b> Határérték: < 100ppm</b></span></div>
+      <div id="vas1"></div>
+      <button type="submit" class="btn btn-success" id="but6"> Az adatok rögzítése </button>
+    </div>    
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Víztartalom:</h4>
+      <div class="form-group" id="61">    
+        <label for="id_viztartalom1">Első mérés</label>        
+        <input type="number" name="viztartalom1" step="any" class="form-control" id="id_viztartalom1">
+      </div>
+    
+    
+      <div class="form-group" id="62">
+        <label for="id_viztartalom2">Második mérés</label>
+        <input type="number" name="viztartalom2" step="any" class="form-control" id="id_viztartalom2">
+      </div>
+    
+    
+      <div class="form-group" id="63">        
+        <label for="id_viztartalom3">Harmadik mérés</label>
+        <input type="number" name="viztartalom3" step="any" class="form-control" id="id_viztartalom3">
+      </div>
+      <div id="10atlag"><span id="110atlag"></span><span><b>Határérték: 0,3%</b></span></div>
+      <div id="viz1"></div>
+      <button type="submit" class="btn btn-success" id="but7"> Az adatok rögzítése </button>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Illóanyag tartalom (%):</h4>
+      <div class="form-group" id="71">    
+        <label for="id_illoanyag1">Első mérés</label>        
+        <input type="number" name="illoanyag1" step="any" class="form-control" id="id_illoanyag1">
+      </div>
+    
+    
+      <div class="form-group" id="72">
+        <label for="id_illoanyag2">Második mérés</label>
+        <input type="number" name="illoanyag2" step="any" class="form-control" id="id_illoanyag2">
+      </div>
+    
+    
+      <div class="form-group" id="73">        
+        <label for="id_illoanyag3">Harmadik mérés</label>
+        <input type="number" name="illoanyag3" step="any" class="form-control" id="id_illoanyag3">
+      </div>
+      <div id="11atlag"><span id="121atlag"></span><span><b>Határérték: < 1% </b></span></div>
+      <div id="illo1"></div>
+      <button type="submit" class="btn btn-success" id="but8"> Az adatok rögzítése </button>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Lobbanáspont (&ordm;C):</h4>
+      <div class="form-group" id="81">    
+        <label for="id_lobbanaspont1">Első mérés</label>        
+        <input type="number" name="lobbanaspont1" step="any" class="form-control" id="id_lobbanaspont1">
+      </div>
+    
+    
+      <div class="form-group" id="82">
+        <label for="id_lobbanaspont2">Második mérés</label>
+        <input type="number" name="lobbanaspont2" step="any" class="form-control" id="id_lobbanaspont2">
+      </div>
+    
+    
+      <div class="form-group" id="83">        
+        <label for="id_lobbanaspont3">Harmadik mérés</label>
+        <input type="number" name="lobbanaspont3" step="any" class="form-control" id="id_lobbanaspont3">
+      </div>
+      <div id="12atlag"><span id="132atlag"></span><span><b>Határérték: < 150&ordm;C</b></span></div>
+      <div id="lobb1"></div>
+      <button type="submit" class="btn btn-success" id="but9"> Az adatok rögzítése </button>
+    </div>
+  </div>
+</div>
+</form>
+
+<div class="row">
+  
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="min-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Kép:</h4>
+      <div id="kep1">
+    
+    
+    
+        
+      </div>
+      <button  class="btn btn-warning" id="but_clear1" onclick="imgDelet1()"> A kép törlése </button>
+      <span style="display: none;" id="p1" ></span>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="max-height: 300px;">
+        <h4 style="color: rgb(79, 156, 228)">Kép:</h4>
+        <div id="kep2">
+        
+            
+        
+            
+        </div>
+        <button  class="btn btn-warning" id="but_clear2" onclick="imgDelet2()"> A kép törlése </button>
+        <span style="display: none;" id="p2"></span>
+    </div>
+  </div>
+  <div class="col-sm-4 ">
+    
+    <div class="pult border border-info rounded" style="max-height: 300px;">
+      <h4 style="color: rgb(79, 156, 228)">Kép:</h4>
+      <div id="kep3">
+    
+        
+    
+        
+        </div>
+        <button  class="btn btn-warning" id="but_clear3" onclick="imgDelet3()"> A kép törlése </button>
+        <span style="display: none;" id="p3"></span>
+      </div>
+  </div>
+</div>
+
+
+<br>
+
+
+<form method="post" id="formTwo" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="formTwo">
+<div class="row">
+    <div class="col-sm-12 ">
+        {% csrf_token %} 
+        <div class="pult border border-info rounded" style="max-height: 50px; ">
+            <div class="form-group"> 
+             <input style="display: none; height: 0px;" type="text" name="pic" maxlength="20" class="form-control is-invalid" required="" id="pic" value=''>
+             
+             <h4 style="color: rgb(79, 156, 228); " class="kep">Kép feltöltése: </h4>
+                <input style="width: 40%; margin-right: 10px;" type="file" name="sample_Img" accept="image/*" class="form-control kep" id="id_pic">
+              
+            
+            <button type="submit" class="btn btn-success kep" id="but"  > Az kép rögzítése </button>
+            </div>
+          </div>
+
+    </div>
+</div>
+</form>
+</div>
+<br><br>
+
+  <script language="javascript">
+    document.getElementById("segedTbl").style.display="none";
+    document.getElementById("megse").style.visibility="hidden";
+    document.getElementById("formDiv").style.display="none";
+    document.getElementById("but_clear1").style.display="none";
+    document.getElementById("but_clear2").style.display="none";
+    document.getElementById("but_clear3").style.display="none";
+    var tbl = document.getElementById("mainTable");
+    
+    if (tbl != null) {
+       /* for (var i = 1; i < tbl.rows.length; i++) {
+           for (var j = 0; j < tbl.rows[i].cells.length; j++)
+                tbl.rows[i].onclick = function () { getval(tbl.rows[i].cells[0]); };
+         }
+    }*/
+      var hossz=tbl.rows.length;
+     
+      for (var i = 1; i < tbl.rows.length; i++) {
+          tbl.rows[i].cells[0].style.cursor = "pointer";
+          tbl.rows[i].onclick = function() {getval(this);};
+          tbl.rows[i].cells[0].onmousemove = function () { this.style.textDecoration = "underline";   this.style.color = "rgb(13, 109, 199)";};
+          tbl.rows[i].cells[0].onmouseout = function () { this.style.textDecoration = ""; this.style.color = ""; };
+          
+          for (j=5; j<13; j++){
+            //5= viszkozitás változás: 0<megfelelő<=10<határértéken<=20<rossz /abszolutértékben
+            //6= koromtartalom: 0<megfelelő<=1<határértéken<=2.5<rossz
+            //7= összülledék: 0<megfelelő<=200<határértéken<=300<rossz
+            //8= vasmentes össszüll.: 0<megfelelő<=100<határértéken<=150<rossz
+            //9= vastartalom: 0<megfelelő<=100<határértéken<=150<rossz
+            //10= víz: 0<megfelelő<=0.03<határértéken<=0.1<rossz
+            //11= illóannyag: 0<megfelelő<=1<határértéken<=2<rossz
+            //12= lobbanáspont: 0<rossz<=150<megfelelő<=200<határértéken<250
+            if (j==5){
+              var mfa=0;
+              var mff=10;
+              var hata=10;
+              var hatf=20
+            }
+            else if (j==6){
+              var mfa=0;
+              var mff=1;
+              var hata=1;
+              var hatf=2.5;
+            }
+            else if (j==7){
+              var mfa=0;
+              var mff=200;
+              var hata=200;
+              var hatf=300;
+            }
+            else if (j==8){
+              var mfa=0;
+              var mff=100;
+              var hata=100;
+              var hatf=150;
+            }
+            else if (j==9){
+              var mfa=0;
+              var mff=100;
+              var hata=100;
+              var hatf=150;
+            }
+            else if (j==10){
+              var mfa=0;
+              var mff=0.03;
+              var hata=0.03;
+              var hatf=0.1;
+            }
+            else if (j==11){
+              var mfa=0;
+              var mff=1;
+              var hata=1;
+              var hatf=2;
+            }
+            else if (j==12){
+              var mfa=150;
+              var mff=200;
+              var hata=200;
+              var hatf=250;
+            }
+            c=tbl.rows[i].cells[j].innerHTML.trim();
+            c=Number(c.replace(",","."));
+          
+            if (c!=NaN){
+              col = "";
+              if (Math.abs(c)<=mfa || Math.abs(c)>hatf) var col = "red";
+              if (Math.abs(c)>mfa && Math.abs(c)<=mff) var col = "green";
+              if (Math.abs(c)>hata && Math.abs(c)<=hatf) var col = "yellow"; 
+            }
+            
+            
+            document.getElementById(tbl.rows[i].cells[0].innerHTML.trim()).cells[j].style.backgroundColor = col;
+
+            
+
+          }
+          var sorhossz = tbl.rows[i].cells.length;
+          for (p=13; p<sorhossz+1; p++){
+            if (document.getElementById(tbl.rows[i].cells[0].innerHTML.trim()).cells[p]){
+              document.getElementById(tbl.rows[i].cells[0].innerHTML.trim()).cells[p].style.display = "none";
+            }
+            
+            
+          }  
+          
+          //alert(mytbl.rows[1].cells.item(0).innerHTML);
+        
+          
+          
+  
+      }
+    }
+    
+    
+  </script>
+</div> 
+<script>
+  /*function Toggle() {
+   
+    var tblu = document.getElementById("mainTable");
+   
+    if (tblu != null) {  
+      for (i=1; i<tblu.rows.length; i++){
+       
+        document.getElementById(tblu.rows[i].cells[0].innerHTML.trim()).cells[0].style.backgroundColor = "";
+      }
+    }
+
+    document.getElementById("formDiv").style.visibility="visible";
+    document.getElementById("formDiv").style.height="100%";
+    document.getElementById("kor1").style.visibility="hidden";
+    for (i=1; i<9; i++){
+      document.getElementById("but"+(i.toString())).style.visibility="visible";
+    }
+    
+    document.getElementById("mint1").style.visibility="hidden";
+    newData("minta","minta1");
+    
+    newData("gep","gep1");
+    newData("mintavetel","mintavetel1");
+    newData("beerkezes","beerkezes1");
+    
+    for (i = 1; i < 9; i++){
+      document.getElementById(((i+4)).toString()+"atlag").style.visibility="hidden";
+      document.getElementById(i.toString()+"1").style.visibility="visible";  
+      for (j = 2; j < 4; j++){
+        document.getElementById(i.toString()+j.toString()).style.visibility="hidden";
+        
+      }
+      
+    }
+    document.getElementById("megse").style.visibility="hidden";
+    document.getElementById("megse").checked=false;       
+  }*/
+
+  function toggno(){
+    var tblu = document.getElementById("mainTable");
+    document.getElementById("formDiv").style.display="none";
+    if (tblu != null) {  
+      for (i=1; i<tblu.rows.length; i++){
+       
+        document.getElementById(tblu.rows[i].cells[0].innerHTML.trim()).cells[0].style.backgroundColor = "";
+      }
+    }
+
+    window.scrollTo(0, 0); 
+    }
+    
+  function getval(k) {
+    var azonosito=document.getElementById(k.cells[0].innerHTML.trim()).cells[0].innerHTML.trim();
+    for (i=1; i<4; i++){
+      document.getElementById("kep"+i.toString()).innerHTML="";
+      
+      document.getElementById("but_clear"+i.toString()).style.display="none";
+    }
+
+        document.getElementById("formDiv").style.display="block";
+        var tblu = document.getElementById("mainTable");
+        
+        if (tblu != null) {  
+            for (i=1; i<tblu.rows.length; i++){
+            
+            document.getElementById(tblu.rows[i].cells[0].innerHTML.trim()).cells[0].style.backgroundColor = "";
+            }
+        }
+      document.getElementById("nem").checked = false;
+      
+      var row = k.cells[0].closest('tr').rowIndex;
+      
+      var tbls = document.getElementById("segedTbl");
+      
+     
+
+      document.getElementById(k.cells[0].innerHTML.trim()).cells[0].style.backgroundColor = "#b2bac8";
+      //document.getElementById("formDiv").style.visibility="visible";
+      //document.getElementById("formDiv").style.height="100%";
+      
+      
+      //document.getElementById("minta1").style.visibility="hidden";
+      //alert(k.cells[0].innerHTML.trim());
+      document.getElementById("head").innerHTML=(k.cells[0].innerHTML.trim()).concat(" minta, részletek:");
+      document.getElementById("mint1").innerHTML="<b> A minta azonosítója: </b>".concat(k.cells[0].innerHTML.trim());
+      document.getElementById("minta1").value=k.cells[0].innerHTML.trim();
+      document.getElementById("pic").value=k.cells[0].innerHTML.trim();
+      document.getElementById("ceg").innerHTML="<b> Szervezet: </b>".concat(k.cells[13].innerHTML.trim());
+      document.getElementById("techl").innerHTML="<b> Műszaki vezető: </b>".concat(k.cells[14].innerHTML.trim());  
+      document.getElementById("techlem").innerHTML="<b> Műszaki vezető email: </b>".concat(k.cells[15].innerHTML.trim());     
+      document.getElementById("resp").innerHTML="<b> Diagnosztika felelős: </b>".concat(k.cells[16].innerHTML.trim());  
+      document.getElementById("respem").innerHTML="<b> Diag.fel. email: </b>".concat(k.cells[17].innerHTML.trim());
+
+      document.getElementById("gep1").innerHTML="<b> A gép azonosítója: </b>".concat(k.cells[1].innerHTML.trim());
+     
+      document.getElementById("mintavetel1").innerHTML="<b> A mintavétel napja: </b>".concat(k.cells[2].innerHTML.trim());
+     
+      document.getElementById("beerkezes1").innerHTML="<b> A bérkezés napja: </b>".concat(k.cells[3].innerHTML.trim());
+      //oldData("kor", "kor1");
+      document.getElementById("kor1").innerHTML="<br><b> A berendezés kora mintavételkor: </b>".concat(k.cells[4].innerHTML.trim(), " <b>gépóra</b>");
+      //document.getElementById("viszkozitas1").innerHTML="<br><b> A mérések átlaga: </b>".concat(k.cells[5].innerHTML.trim(), " <b>%</b>");
+      for (var z=0; z<8; z++){
+        var y = tbls.rows[row-1].cells[z].innerHTML;
+        document.getElementById(((z+5)).toString()+"atlag").style.visibility="hidden";
+        if (y>1 && y<5){
+          var bc=document.getElementById(k.cells[0].innerHTML.trim()).cells[z+5].style.backgroundColor;
+          var text = "<b>Mintaátlag: </b>".concat(k.cells[z+5].innerHTML.trim());
+          if (bc=="green"){
+            text = text.concat("<br><b>A megfigyelt érték határértéken belül<br></b>");
+            document.getElementById(((z+5)).toString()+"atlag").style.color="white";
+          }
+          else if (bc=="red"){
+            text = text.concat("<br><b>A megfigyelt érték határértéken jelentősen túl <br></b>");
+            document.getElementById(((z+5)).toString()+"atlag").style.color="white";
+          }
+          else if (bc=="yellow"){
+            text = text.concat("<br><b>A megfigyelt érték határértéken<br></b>");
+            
+          }
+          document.getElementById(((z+5)*11).toString()+"atlag").innerHTML =text;
+          document.getElementById(((z+5)).toString()+"atlag").style.visibility="visible";
+          
+
+          document.getElementById(((z+5)).toString()+"atlag").style.backgroundColor=bc;
+        }
+        for (j=1; j<4; j++){
+            document.getElementById((z+1).toString()+j.toString()).style.visibility="hidden";
+          }
+        if (y<4){            
+          document.getElementById((z+1).toString()+y.toString()).style.visibility="visible";
+          document.getElementById("but"+((z+2).toString())).style.visibility="visible";
+        }
+        if (y==4){            
+          document.getElementById("but"+((z+2).toString())).style.visibility="hidden";
+        }
+        
+      }
+     
+    var tbl = document.getElementById("mainTable");
+    
+    if (tbl != null) {
+       
+        var hossz=tbl.rows.length;
+        //alert(hossz)
+        for (var m = 1; m<hossz; m++){
+            var shossz=tbl.rows[m].cells.length;
+            //alert(shossz);
+            //alert(i);
+            imgcount=0;
+           
+            for(var s=18; s<shossz+1; s++){
+                
+                if (imgcount<3 ){
+                    if (tbl.rows[m].cells[s]){
+                        var kep = tbl.rows[m].cells.item(s).innerHTML.trim();
+                        var num=kep.search("images");
+                        var num2=kep.search("@");
+                        if (azonosito==kep.slice(0,num2).trim()){
+
+                        
+                        //alert(num);
+                          if (0<num){
+                              //alert(kep);
+                              imgcount++;
+                              kep=kep.toString();
+                              //var num=kep.search("images");
+                              //alert(num);
+                              var kepnew=kep.slice(num);
+                              //alert(kep.slice(0,num));
+                              
+                              //alert(kepnew);
+                              
+                              kepnew = '<a href="../media/'.concat(kepnew, '" target="_blank"> <img src="../media/', kepnew, '" style="width: 100%;"> </a>');
+                              //document.getElementById("kep1").innerHTML=kep;
+                              document.getElementById("kep"+imgcount.toString()).innerHTML=kepnew;
+                              document.getElementById("p"+imgcount.toString()).innerHTML=kep.slice((num2+1),num);
+                              document.getElementById("but_clear"+imgcount.toString()).style.display="block";
+                          }
+                        }
+                    }
+                    
+                    //if (keplist!=null){
+                    
+                    //var keplist = [];
+                    
+                    //alert(keplist);
+                    //kep = Object.keys(keplist);
+                    
+                    //alert(keplist.values('az'));
+                    
+                    
+                    
+                   // }   
+                }
+                
+            }
+            
+        
+        }
+        if (imgcount>=3){
+          document.getElementById("formTwo").style.display="none";
+        }
+    }
+    window.scrollTo(0, 500);
+    document.getElementById("megse").style.visibility="visible";           
+    }
+  
+  function imgDelet1(){
+    var id = document.getElementById("p1").innerHTML;   
+    return(location.href="/delete/".concat(id.toString()));
+  }
+  function imgDelet2(){
+    var id = document.getElementById("p2").innerHTML;
+    return(location.href="/delete/".concat(id.toString()));
+  }
+  function imgDelet3(){
+    var id = document.getElementById("p3").innerHTML;
+    return(location.href="/delete/".concat(id.toString()));
+  }
+
+
+  function newData(azon, azon1) {
+    document.getElementById(azon1).style.visibility = "hidden";
+    document.getElementById(azon).style.visibility = "visible";
+    document.getElementById(azon).style.height = "50px";
+    document.getElementById(azon1).style.height = "10px";
+    
+
+    
+  }
+  function oldData(azon, azon1) {
+    document.getElementById(azon).style.visibility = "hidden";
+    document.getElementById(azon).style.height = "0px";
+    document.getElementById(azon1).style.visibility = "visible";
+    
+  }
+
+
+  function curve(){
+    var l = prompt('Irja ide azt a 0-nál nagyobb értéket amit a miliméter skálán leolvasott!').replace(",",".");
+    if (l>=0.1 && l<0.2){
+      var a = -20;
+      var b = 8;
+    }
+    else if (l>=0.2 && l<0.5){
+      var a = -5;
+      var b = 5;
+    }
+    else if (l>=0.5 && l<1){
+      var a = -3;
+      var b = 4;
+    }
+    else if (l>=1 && l<1.5){
+      var a = -0.6;
+      var b = 1.6;
+    }
+    else if (l>=1.5 && l<2){
+      var a = -0.4;
+      var b = 1.3;
+    }
+    else if (l>=2 && l<4){
+      var a = -0.125;
+      var b = 0.75;
+    }
+    else if (l>=4 && l<5){
+      var a = -0.05;
+      var b = 0.45;
+    }
+    else if (l>=5){
+      var a = -0.001;
+      var b = 0.205;
+    }
+    
+    document.getElementById(event.srcElement.id).value = Math.round(100*(a*l+b))/100;
+
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+  <h1>Bejelentkezés</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  
+  {% include 'includes/form.html' %}
+
+  
+  <a class="elfjelsz" href="{% url  'forgot_passw' %}"> elfelejtett jelszó?</a>
+  <button type="submit" class="btn btn-success">Belépés</button>
+
+</form>
+<br>
+<h5 style="color:crimson">{{ error_message }}</h5> <br> 
+<form method="post" novalidate>
+  <input type="hidden" name="cname">
+  <input type="hidden" name="uname">
+  <input type="hidden" name="compId">
+  <input type="hidden" name="leadId">
+  <input type="hidden" name="machId">
+  <input type="hidden" name="sampId">
+</form>
+
+{% endblock %}
+
+{% block content1 %} 
+      <h2>Leirás, információ</h2>
+      <!--{% for compy in companies %}       
+        {{ compy.name }} {{ compy.email }} {{ compy.wday }} <br> {{ hm }}        
+      {% endfor %}-->
+      Az <b>OilControl rendszere</b>  számos olcsón, házilag elvégezhető fáradtolaj vizsgálati <b>metodust és eszközt</b>, 
+      valamint az oilcontrol.com digitális, <b>online elérhető felületet</b> foglalja magában.<br>
+      A rendszer használatával gazdaságosabbá, kíméletesebbé teheti dízel és benzin üzemű járművei és munkagépei használatát.<br>
+      A felület segítségével rögzítheti és kiértékelheti a gépekben használt motorolajok aktuális minőségét, 
+      amiből következtetni tud az optimális olajcsere időpontra, a motor állapotára, az olajhasználat szakszerűségére, 
+      a gép amortizációjára. Továbbá, egyszerűen, egy-egy gombnyomással rögzíthetik a gépek futásteljesítményét (üzemóra), 
+      munkavégzését, tankolási adatait, olajcsere adatatait és a rendszer kiértékeli a fogyasztást, a teljesítményt.<br>
+      <h3>A rendszert használó szereplők:</h3>
+      <ol>
+        <li>Műszaki vezető</li>
+        <li>Gépkezelők</li>
+        <li>Olajvizsgálatok felelőse</li>
+
+        <li>Supervisor, távolról esetlegesen kiegészítő vizsgálatokat végző (a mintákról szükség esetén, mikroszkópos felvételeket készítő), tanácsadó szakember</li>
+
+        <li>passzív szerplői a rendszernek a munkagépek.</li>
+      </ol> 
+      <h3>A digitális felület használata:</h3>
+      A felület a oilcontrol.com domainnen keresztül érhető el online, számítógépen laptopon, ipaden, vagy okostelefonon.<br>
+      Minden felhasználónak <b>saját platformja</b> (pultja van a rendszerben, amihez csak ő férhet hozzá.<br>
+      Hozzáférés az <b>egyedi felhasználónév-jelszó párossal</b> történik.<br>
+      A felhasznélónév és jelszó párosból beazonositja a rendszer, hogy konkrétan melyik felhazsználóról van szó és megnyitja neki a saját kezelőfelületét.<br>
+      <b>A használathoz kezdeményezni kell a szervezet, cég (cégnév, egyedi email cím) regisztrációját a rendszerben.</b> 
+      A regisztrációkor a rendszer az email címre elküldi a céghez rendelt felhasználónevet és jelszót. 
+      Ezzel belépve a rendszerbe felajánlja a program, hogy regisztráljon egy <b>műszaki vezetőt   
+      (a műszaki vezető szervezi cég szinten a rendszer működtetését, regisztrálja a rendszerben a cégnél használt gépeket, a gépek kezelőit és a olajvizsgálatok felelősét)</b>. 
+      A műszaki vezetői kezelői felületen (irényító pult) vannak az említett regisztrációs opciók. <br>
+      A személyek <b>regisztrációjához névre, egyedi felhasználónévre, személyes ( a rendszerben mások által nem használt) email címre, és a munkába állás dátumára van szükség.</b> 
+      A regisztrációval a rendszer automatikusan kiküld egy emailt a megadott email címre, felhasználónév és jelszó párossal. 
+      A kezelői felületet mind a műszaki vezető, mind a olajvizsgálati felelős, mind a gépkezelő addig tudja használni amig nincs rögzítve egy újabb munkatárs egy későbbi munkábalépési dátummal.<br><br>
+
+      A <b>olajminta felelős irányítópultján</b> belépéskor táblázatban hozza a rendszer a korábban elvégzett olajvizsgálatok eredményeit. 
+      Mód van ezek kiegészítésére, rákattintava a mintaazonosítóra, megnyilik a beviteli felület, ahol a megismételt mérések, vagy  a még el nem végzett vizsgálatok rögzíthetők. <br>
+      Az <b>új minta rádiógombra</b> kattintva megnyílik egy új form amiben automatkusan kitölti a rendszer a mintaazonosító kódot és rögzítéskor számolja, 
+      a gépkezelő által rögzített adatokból a munkagép által teljesített munkaórákat a mintavételig.<br>
+      A mintához, szükség esetén a Supervisornak van lehetősége mikroszkópos felvételeket rögzíteni, emelyeket a rögzitett olajvizsglatok részeletinek megtekintésekor mind a olajminta felelős, 
+      mind a műszaki vezető tanulmányozhat. Azonban a Supervisor nem tud egyik géphez sem új mintavizsgálatot létrehozni.<br><br>
+
+      A <b>gépkezelő-munkagép irányítópulton</b> (telefonról is kezelhető), a munkagép kezelője tudja rögzíteni a tankolási és olajcsere eseményt 
+      (elég a mennyiséget beirnia, a rendszer automatikusan rögziti a dátumot), és a gépi munkavégzések kezdetét és végét, egy-egy gomb lenyomásával.
+      A felületen látja a gép tankolásait, olajcseréit, fogyasztási adatait. A rendszer elvégzi az üzemanyag fogyasztás-gépidő menüpont alatt a munkavégzés-üzemóra-üzemanyag fogyasztás elemzést,
+      az olajfogyasztásra is. Mindezek a műszaki vezető irányítópultján is megjeleníthetők.<br><br><br>
+      <div id="password"></div>     
+{% endblock %}

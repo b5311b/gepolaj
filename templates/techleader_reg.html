@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+
+{% block title %}Start a New Technical Leader{% endblock %}
+
+
+{% block breadcrumb1 %}
+
+
+<a class="nav-link dropdown-toggle" href="{{ domain }}" id="userMenu" >
+  Vissza az irányítópulthoz
+</a>
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="#">{{ company }}</a></li>
+  <li class="breadcrumb-item active">Műszaki Vezető Regisztráció: </li>
+  
+    
+  
+{% endblock %}
+
+{% block content %}
+<!--<style>
+  form div:nth-of-type(5) {
+      display: none;
+  }
+</style>-->
+<h5 style="color:crimson">{{ error_message }}<br>
+  {% if error_message %}
+    <a href="{{ request.get_full_path }}">ÚJRA</a>
+  {% endif %}</h5>
+<form method="post" novalidate>
+  {% csrf_token %} 
+      
+  {% include 'includes/form.html' %}
+     
+  <button type="submit" class="btn btn-success">Regisztráció</button>
+</form>
+<form class="seged" method="post" novalidate>
+  {% csrf_token %}  
+  <table class="seged">
+    {{ form1.as_table }}
+  </table>
+  <button class="seged" type="submit" class="btn btn-success">Feltöltés2</button>
+</form>
+
+<br><br>
+<a href="/techleader_pult/">Vissza az irányítópulthoz</a>
+<br><br>
+
+{% endblock %}
+
+{% block content1 %}
+      A regisztráció után visszaküldjük a bejelentkzési oldalra. 
+      Ott az aktuális dátum előtt regisztrált műszaki vezető  közül az utolsót engedi belépni a rendszer.
+      Ő az aki aktuálisan vezérli a rendszert.<br> <br> 
+      Az eddigi műszaki vezetők listáját és munkába állásuk napját itt láthatja.
+      <h3>Már regisztrált műszaki vezetők:</h3>
+      {% for lead in leaders %}       
+        {{ lead.name }} {{ lead.startday }}-tól <br>  
+      {% endfor %}
+      <div id="password"></div>     
+{% endblock %}

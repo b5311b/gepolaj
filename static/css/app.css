@@ -1,0 +1,126 @@
+.navbar-brand {
+    font-family: 'DM+Serif+Text', cursive;
+  }
+div.div {
+  width: 100%;
+  
+}
+#mess {
+  width: 100%;
+  background-color: rgb(203, 212, 212);
+  padding: 10px;
+}
+#mess a {
+  float: right;
+  margin-right: 20px;   
+  margin-bottom: 20px;  
+}
+#id_usergroup_0 {
+  width: 20px;
+}
+#id_usergroup td {
+  padding-right: 5px;
+  text-align: right;
+}
+
+
+
+.elfjelsz {
+  float: right;
+}
+
+
+.sidenav {
+  height: auto;
+  
+  /*position: fixed;
+  
+  top: 0;
+  left: 0;*/
+  z-index: 1000;
+  background-color: rgba(255, 253, 253, 0.4);
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 2px;
+  visibility: hidden;
+  
+}
+
+.sidenav a {
+  padding: 5px 5px 5px 2px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #2852c5;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #818181;
+}
+
+.closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  /*margin-left: 50px;
+  visibility: hidden;*/
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+@media screen and (max-width: 700px) {
+  .sidenav {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidenav a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidenav a {
+    text-align: center;
+    float: none;
+  }
+}
+
+.pult {
+  align-items: center;
+  padding: 10px;
+  margin: 2px;
+  width: 97%;
+  height:99%;
+  
+}
+#id_cidentnum, label[for="id_cidentnum"] {
+  position: absolute;
+  display: none
+}
+
+.gomb {
+  width: 100%;
+}
+.btn-danger { 
+  height: 150px;
+}
+
+.seged, .seged div, .seged label, .seged input {
+  visibility: hidden;
+  height: 0px;
+}
+
+.table, .container {
+  width: 100%;
+}
+
